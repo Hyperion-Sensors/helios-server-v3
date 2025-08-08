@@ -1,0 +1,381 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model asset {
+  id                 Int             @id(map: "fiber_group_pkey") @default(autoincrement())
+  tfit_id            Int
+  name               String          @db.VarChar
+  active             Boolean         @default(true)
+  max_allowable_temp Float?          @db.Real
+  min_allowable_temp Float?          @db.Real
+  nominal_temp       Float?          @db.Real
+  tfit               tfit            @relation(fields: [tfit_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "asset_id")
+  capacity           capacity[]
+  fiber              fiber[]
+  load               load[]
+  three_d_model      three_d_model[]
+}
+
+model capacity {
+  id       BigInt   @default(autoincrement())
+  asset_id Int
+  time     DateTime @default(now()) @db.Timestamptz(6)
+  capacity Float
+  asset    asset    @relation(fields: [asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "asset_id")
+
+  @@unique([id, time], map: "idx_capacity_id_time")
+  @@index([time(sort: Desc)])
+}
+
+model fiber {
+  id                 Int           @id @default(autoincrement())
+  name               String        @db.VarChar
+  asset_id           Int
+  start              Float
+  end                Float
+  min_allowable_temp Float         @default(0)
+  max_allowable_temp Float         @default(100)
+  asset              asset         @relation(fields: [asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "asset_id")
+  temperature        temperature[]
+  two_d_model        two_d_model[]
+}
+
+model load {
+  id              Int      @id @default(autoincrement())
+  time            DateTime @db.Timestamptz(6)
+  asset_id        Int?
+  amps            Float?   @db.Real
+  volts           Float?   @db.Real
+  breaker_status  Boolean?
+  breaker_voltage Float?   @db.Real
+  asset           asset?   @relation(fields: [asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "asset_id")
+
+  @@index([asset_id], map: "fki_load_asset_id_fkey")
+}
+
+model location {
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar
+  coordinates Decimal[] @db.Decimal
+  region      String?   @db.VarChar
+  tfit        tfit[]
+}
+
+model notifications {
+  id          Int      @id @default(autoincrement())
+  asset_id    Int
+  fiber_id    Int
+  time        DateTime @db.Timestamptz(6)
+  message     String
+  alert_level String   @db.VarChar
+  action      String   @db.VarChar
+  tfit        tfit     @relation(fields: [asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "asset_id")
+}
+
+model sensor_data_demo_c4 {
+  id                      BigInt                  @id(map: "sensor_demo_c4_pkey") @default(autoincrement())
+  settings_id             BigInt
+  time                    DateTime?               @default(now()) @db.Timestamptz(6)
+  frequency_mhz           Float[]                 @db.Real
+  temp_celcius            Float[]                 @db.Real
+  strain                  Float[]                 @db.Real
+  sensor_settings_demo_c4 sensor_settings_demo_c4 @relation(fields: [settings_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sensor_demo_c4_settings_id_fkey")
+}
+
+model sensor_data_demo_p2 {
+  id                      BigInt                  @id @default(autoincrement())
+  settings_id             BigInt
+  time                    DateTime?               @default(now()) @db.Timestamptz(6)
+  frequency_mhz           Float[]                 @db.Real
+  temp_celcius            Float[]                 @db.Real
+  strain                  Float[]                 @db.Real
+  sensor_settings_demo_p2 sensor_settings_demo_p2 @relation(fields: [settings_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model sensor_data_elexicon_beaverton {
+  id                                 BigInt                             @id(map: "sensor_data_elexicon_beaverton_new_pkey")
+  settings_id                        BigInt
+  temp_celcius                       Float[]                            @db.Real
+  strain                             Float[]                            @db.Real
+  time                               DateTime?                          @db.Timestamptz(6)
+  frequency_mhz                      Float[]                            @db.Real
+  sensor_settings_elexicon_beaverton sensor_settings_elexicon_beaverton @relation(fields: [settings_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sensor_data_elexicon_beaverton_settings_id_new_fkey")
+
+  @@index([settings_id], map: "fki_sensor_data_elexicon_beaverton_settings_id_new_fkey")
+}
+
+model sensor_data_glencore_sudbury {
+  id            BigInt    @id @default(autoincrement())
+  settings_id   Int
+  temp_celcius  Float[]   @db.Real
+  strain        Float[]   @db.Real
+  frequency_mhz Float[]   @db.Real
+  time          DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+model sensor_data_lab_demo_c5 {
+  id                          BigInt                      @id(map: "sensor_lab_demo_c5_pkey") @default(autoincrement())
+  settings_id                 BigInt
+  time                        DateTime?                   @default(now()) @db.Timestamptz(6)
+  frequency_mhz               Float[]                     @db.Real
+  temp_celcius                Float[]                     @db.Real
+  strain                      Float[]                     @db.Real
+  sensor_settings_lab_demo_c5 sensor_settings_lab_demo_c5 @relation(fields: [settings_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sensor_lab_demo_c5_settings_id_fkey")
+}
+
+model sensor_diagnostics_demo_c4 {
+  diagnostics_id BigInt    @id @default(autoincrement())
+  diagnostics    Json
+  time           DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+model sensor_diagnostics_demo_p2 {
+  diagnostics_id BigInt    @id @default(autoincrement())
+  diagnostics    Json
+  time           DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model sensor_diagnostics_glencore_sudbury {
+  diagnostics_id BigInt    @default(autoincrement())
+  diagnostics    Json?
+  time           DateTime? @db.Timestamptz(6)
+
+  @@ignore
+}
+
+model sensor_diagnostics_lab_demo_c5 {
+  diagnostics_id BigInt    @id @default(autoincrement())
+  diagnostics    Json
+  time           DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+model sensor_settings_demo_c4 {
+  id                  BigInt                @id @default(autoincrement())
+  settings            Json                  @unique
+  time                DateTime?             @default(now()) @db.Timestamptz(6)
+  sensor_data_demo_c4 sensor_data_demo_c4[]
+}
+
+model sensor_settings_demo_p2 {
+  id                  BigInt                @id @default(autoincrement())
+  settings            Json                  @unique
+  time                DateTime?             @default(now()) @db.Timestamptz(6)
+  sensor_data_demo_p2 sensor_data_demo_p2[]
+}
+
+model sensor_settings_elexicon_beaverton {
+  id                             BigInt                           @id(map: "sensor_settings_elexicon_beaverton_new_pkey")
+  settings                       Json
+  time                           DateTime?                        @db.Timestamptz(6)
+  sensor_data_elexicon_beaverton sensor_data_elexicon_beaverton[]
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model sensor_settings_glencore_sudbury {
+  id       BigInt    @default(autoincrement())
+  settings Json?
+  time     DateTime? @db.Timestamptz(6)
+
+  @@ignore
+}
+
+model sensor_settings_lab_demo_c5 {
+  id                      BigInt                    @id @default(autoincrement())
+  settings                Json                      @unique
+  time                    DateTime?                 @default(now()) @db.Timestamptz(6)
+  sensor_data_lab_demo_c5 sensor_data_lab_demo_c5[]
+}
+
+model status {
+  id      BigInt   @id @default(autoincrement())
+  tfit_id Int
+  active  Boolean
+  message String
+  time    DateTime @default(now()) @db.Timestamptz(6)
+  tfit    tfit     @relation(fields: [tfit_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tfit_id")
+}
+
+model temperature {
+  id       Int      @default(autoincrement())
+  time     DateTime @db.Timestamptz(6)
+  fiber_id Int
+  max      Float?
+  min      Float?
+  avg      Float?
+  fiber    fiber    @relation(fields: [fiber_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fiber_id")
+
+  @@unique([id, time])
+  @@index([fiber_id, time(sort: Desc)], map: "ix_fiber_id_time")
+}
+
+model tfit {
+  id                       Int             @id(map: "asset_pkey") @default(autoincrement())
+  name                     String          @db.VarChar
+  location_id              Int
+  sensor_data_table        String?         @db.VarChar
+  sensor_settings_table    String?         @db.VarChar
+  sensor_diagnostics_table String?         @db.VarChar
+  asset                    asset[]
+  notifications            notifications[]
+  status                   status[]
+  location                 location        @relation(fields: [location_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "location_id")
+
+  @@index([name], map: "idx_tfit_name")
+}
+
+model three_d_model {
+  id          Int      @id @default(autoincrement())
+  asset_id    Int
+  fibers      String[] @db.VarChar
+  accessories String[] @db.VarChar
+  scale       Float?
+  asset       asset    @relation(fields: [asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "asset_id")
+}
+
+model two_d_model {
+  id       Int    @id @default(autoincrement())
+  asset_id Int
+  svg_path String @db.VarChar
+  z_index  Int    @default(0)
+  fiber_id Int
+  fiber    fiber  @relation(fields: [fiber_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fiber_id")
+}
+
+model sensor_data_alectra_york_ms {
+  id                              BigInt                          @id(map: "sensor_alectra_york_ms_pkey") @default(autoincrement())
+  settings_id                     BigInt
+  time                            DateTime?                       @default(now()) @db.Timestamptz(6)
+  frequency_mhz                   Float[]                         @db.Real
+  temp_celcius                    Float[]                         @db.Real
+  strain                          Float[]                         @db.Real
+  sensor_settings_alectra_york_ms sensor_settings_alectra_york_ms @relation(fields: [settings_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sensor_alectra_york_ms_settings_id_fkey")
+
+  @@index([settings_id], map: "fki_sensor_alectra_york_ms_settings_id_fkey")
+}
+
+model sensor_data_elexicon_beaverton_backup {
+  id                                        BigInt                                    @id(map: "sensor_data_elexicon_beaverton_pkey")
+  settings_id                               BigInt
+  temp_celcius                              Float[]                                   @db.Real
+  strain                                    Float[]                                   @db.Real
+  custom                                    Json?
+  time                                      DateTime?                                 @default(now()) @db.Timestamptz(6)
+  frequency_mhz                             Float[]                                   @db.Real
+  sensor_settings_elexicon_beaverton_backup sensor_settings_elexicon_beaverton_backup @relation(fields: [settings_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sensor_data_elexicon_beaverton_settings_id_fkey")
+}
+
+model sensor_data_lab_demo_c3 {
+  id                          BigInt                      @id
+  settings_id                 BigInt
+  time                        DateTime?                   @db.Timestamptz(6)
+  frequency_mhz               Float[]                     @db.Real
+  temp_celcius                Float[]                     @db.Real
+  strain                      Float[]                     @db.Real
+  sensor_settings_lab_demo_c3 sensor_settings_lab_demo_c3 @relation(fields: [settings_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sensor_lab_demo_c3_settings_id_fkey")
+
+  @@index([settings_id], map: "fki_sensor_lab_demo_c3_settings_id_fkey")
+}
+
+model sensor_diagnostics_alectra_york_ms {
+  diagnostics_id BigInt    @id @default(autoincrement())
+  diagnostics    Json
+  time           DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+model sensor_diagnostics_elexicon_beaverton_backup {
+  diagnostics_id BigInt    @id(map: "sensor_diagnostics_elexicon_beaverton_pkey1")
+  diagnostics    Json
+  time           DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+model sensor_diagnostics_lab_demo_c3 {
+  diagnostics_id BigInt    @id
+  diagnostics    Json
+  time           DateTime? @db.Timestamptz(6)
+}
+
+model sensor_settings_alectra_york_ms {
+  id                          BigInt                        @id @default(autoincrement())
+  settings                    Json                          @unique
+  time                        DateTime?                     @default(now()) @db.Timestamptz(6)
+  sensor_data_alectra_york_ms sensor_data_alectra_york_ms[]
+}
+
+model sensor_settings_elexicon_beaverton_backup {
+  id                                    BigInt                                  @id(map: "sensor_settings_elexicon_beaverton_pkey")
+  settings                              Json                                    @unique(map: "sensor_settings_elexicon_beaverton_settings_key")
+  time                                  DateTime?                               @default(now()) @db.Timestamptz(6)
+  sensor_data_elexicon_beaverton_backup sensor_data_elexicon_beaverton_backup[]
+}
+
+model sensor_settings_lab_demo_c3 {
+  id                      BigInt                    @id
+  settings                Json
+  time                    DateTime?                 @db.Timestamptz(6)
+  sensor_data_lab_demo_c3 sensor_data_lab_demo_c3[]
+}
+
+model tb_sensor_data_test_data {
+  id                               BigInt                           @id @default(autoincrement())
+  settings_id                      BigInt
+  time                             DateTime?                        @default(now()) @db.Timestamptz(6)
+  frequency_mhz                    Float[]
+  temp_celcius                     Float[]
+  strain                           Int[]
+  tb_sensor_settings_test_settings tb_sensor_settings_test_settings @relation(fields: [settings_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model tb_sensor_settings_test_settings {
+  id                       BigInt                     @id @default(autoincrement())
+  settings                 Json                       @unique
+  time                     DateTime?                  @default(now()) @db.Timestamptz(6)
+  tb_sensor_data_test_data tb_sensor_data_test_data[]
+}
+
+model widget {
+  name       String  @id @db.VarChar
+  category   String  @db.VarChar
+  admin_only Boolean @default(false)
+}
+
+model sensor_data_hyper_c5_dev {
+  id                           BigInt                       @id
+  settings_id                  BigInt
+  time                         DateTime?                    @default(now()) @db.Timestamptz(6)
+  frequency_mhz                Float[]                      @db.Real
+  temp_celcius                 Float[]                      @db.Real
+  strain                       Float[]                      @db.Real
+  sensor_settings_hyper_c5_dev sensor_settings_hyper_c5_dev @relation(fields: [settings_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sensor_hyper_c5_dev_settings_id_fkey")
+
+  @@index([settings_id], map: "fki_sensor_hyper_c5_dev_settings_id_fkey")
+}
+
+model sensor_diagnostics_hyper_c5_dev {
+  diagnostics_id BigInt    @id
+  diagnostics    Json
+  time           DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+model sensor_settings_hyper_c5_dev {
+  id                       BigInt                     @id
+  settings                 Json
+  time                     DateTime?                  @default(now()) @db.Timestamptz(6)
+  sensor_data_hyper_c5_dev sensor_data_hyper_c5_dev[]
+}
+
+model user_settings {
+  user_id  String   @id @db.Char(36)
+  settings Json
+  saved_at DateTime @default(now()) @db.Timestamptz(6)
+}

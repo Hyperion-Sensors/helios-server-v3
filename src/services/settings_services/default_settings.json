@@ -1,0 +1,15 @@
+{
+	"settings": {
+		"general": {
+			"Theme": "light",
+			"Side_Panel_Default": true,
+			"Color_Blind_Mode": false
+		},
+		"data_options": {
+			"Pinned_Assets": [],
+			"Favorite_Widgets": [],
+			"Data_Refresh_Rate": 30,
+			"Unit_System": "metric"
+		}
+	}
+}
