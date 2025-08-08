@@ -4,20 +4,20 @@ Express + TypeScript REST API for Helios.
 
 ### Quick start
 
-1) Install dependencies
+1. Install dependencies
 
 ```
 yarn install
 ```
 
-2) Create a .env (see docs/env-setup.md for all variables). Minimal example:
+2. Create a .env (see docs/env-setup.md for all variables). Minimal example:
 
 ```
 PORT=8000
 DATABASE_URL=postgresql://user:password@localhost:5432/helios
 ```
 
-3) Build and run
+3. Build and run
 
 ```
 yarn build && yarn start

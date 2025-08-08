@@ -12,31 +12,29 @@ Behavior:
 */
 
 export function requireAuth(req: Request, res: Response, next: NextFunction) {
-  const isEnabled = process.env.COGNITO_ENABLED === 'true';
-  const isEnforce = process.env.COGNITO_ENFORCE === 'true';
+	const isEnabled = process.env.COGNITO_ENABLED === 'true';
+	const isEnforce = process.env.COGNITO_ENFORCE === 'true';
 
-  if (!isEnabled) {
-    next();
-    return;
-  }
+	if (!isEnabled) {
+		next();
+		return;
+	}
 
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    res.status(401).json({error: 'Missing or invalid Authorization header'});
-    return;
-  }
+	const authHeader = req.headers.authorization;
+	if (!authHeader || !authHeader.startsWith('Bearer ')) {
+		res.status(401).json({error: 'Missing or invalid Authorization header'});
+		return;
+	}
 
-  const token = authHeader.slice('Bearer '.length).trim();
-  // Attach raw token for downstream use. Verification will be added later.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (req as any).accessToken = token;
+	const token = authHeader.slice('Bearer '.length).trim();
+	// Attach raw token for downstream use. Verification will be added later.
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	(req as any).accessToken = token;
 
-  if (isEnforce) {
-    res.status(501).json({error: 'Cognito verification not implemented yet'});
-    return;
-  }
+	if (isEnforce) {
+		res.status(501).json({error: 'Cognito verification not implemented yet'});
+		return;
+	}
 
-  next();
+	next();
 }
-
-

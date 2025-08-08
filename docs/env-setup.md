@@ -3,10 +3,12 @@
 The server loads environment variables using `dotenv` in `index.ts` and uses Prisma for DB access. Below variables are referenced in code:
 
 Required
+
 - `PORT`: Port for the Express server (e.g., `8000`).
 - `DATABASE_URL`: Postgres connection string for Prisma, e.g.: `postgresql://user:password@host:5432/dbname`.
 
 Optional (used by tests or integrations)
+
 - `NODE_ENV`: `development` | `test` | `production`. When `NODE_ENV=test`, the app does not bind the port.
 - `TEST_USER_ID`: UUID used by settings route tests.
 - AWS (if using file services to S3):
@@ -16,6 +18,7 @@ Optional (used by tests or integrations)
   - `AWS_S3_BUCKET_NAME`
 
 Example .env (local dev)
+
 ```
 PORT=8000
 NODE_ENV=development
@@ -32,8 +35,8 @@ AWS_S3_BUCKET_NAME=your-bucket
 ```
 
 How it’s used
+
 - `index.ts` reads `PORT` and `NODE_ENV`.
 - `prisma/schema.prisma` uses `DATABASE_URL` to connect to Postgres.
 - `src/services/file_services/index.ts` reads AWS variables for S3 operations.
 - tests in `test/unit/routes/settings_routes.test.ts` read `TEST_USER_ID` for requests.
-
