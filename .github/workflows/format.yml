@@ -1,0 +1,33 @@
+name: FORMAT [helios-server action]
+run-name: ${{ github.actor }} Testing formatting of ${{ github.ref }} 🚀
+
+on:
+  push:
+    branches: [dev, main]
+  pull_request:
+    branches: [dev, main]
+
+jobs:
+  format-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      # Prefer non-mutating check in CI. If you want auto-fix, replace with: yarn format
+      - name: Check formatting
+        run: npx prettier --check .
+
+      - name: Run ESLint
+        run: yarn lint
+
+
