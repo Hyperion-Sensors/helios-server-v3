@@ -1,5 +1,6 @@
 /*---------------------------------------Library Imports-------------------------------------- */
 import {v4 as uuidv4} from 'uuid';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 import fs from 'fs';
 import {Response} from 'express';
