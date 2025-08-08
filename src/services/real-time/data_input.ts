@@ -16,15 +16,15 @@ export async function put_sensor_data(
 	strain: any
 ): Promise<boolean | unknown> {
 	try {
-    const table = 'sensor_data_' + tfit;
-    const result = await repo.insertSensorData(table, {
-      settings_id,
-      time,
-      frequency_mhz,
-      temp_celcius,
-      strain,
-    });
-    return Array.isArray(result) ? true : !!result;
+		const table = 'sensor_data_' + tfit;
+		const result = await repo.insertSensorData(table, {
+			settings_id,
+			time,
+			frequency_mhz,
+			temp_celcius,
+			strain,
+		});
+		return Array.isArray(result) ? true : !!result;
 	} catch (err) {
 		console.log(err); // eslint-disable-line
 	}

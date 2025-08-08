@@ -2,7 +2,7 @@ name: Docker Build and Push
 
 on:
   push:
-    branches: ["main", "dev"]
+    branches: ['main', 'dev']
   workflow_dispatch:
 
 jobs:
@@ -40,5 +40,3 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-
-

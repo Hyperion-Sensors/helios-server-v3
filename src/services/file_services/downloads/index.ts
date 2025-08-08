@@ -18,7 +18,7 @@ export async function get_downloadable_asset_temps(
 	asset_names: Array<string>,
 	start_date: string,
 	end_date: string,
-	fahrenheit: boolean = false
+	fahrenheit = false
 ): Promise<Array<Asset_Temp_Aggregate> | unknown> {
 	try {
 		// const start_time = start_date;
@@ -67,7 +67,7 @@ export async function get_downloadable_asset_temps(
 export async function get_all_downloadable_asset_temps(
 	start_date: string,
 	end_date: string,
-	imperial: boolean = false
+	imperial = false
 ): Promise<Array<Temp_Aggregate> | unknown> {
 	try {
 		const start_time = start_date;
@@ -116,7 +116,7 @@ export async function get_downloadable_fiber_temps(
 	asset_names: Array<string>,
 	start_date: string,
 	end_date: string,
-	imperial: boolean = false
+	imperial = false
 ): Promise<Array<Fiber_Temp_Data> | unknown> {
 	try {
 		const start_time = start_date;

@@ -24,5 +24,3 @@ jobs:
 
       - name: Prisma validate
         run: npx prisma validate
-
-

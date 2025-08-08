@@ -65,13 +65,12 @@ export default async function get_segment_temps(
 			min: fiber_segments[0].min,
 		});
 
-		/* eslint-disable */
-		const responseData: any = {};
-		/* eslint-enable */
+		const responseData: Record<
+			string,
+			Array<{x: number; y: number | null}> | unknown
+		> = {};
 		for (let i = 0; i < fiber_segments.length; i++) {
-			/* eslint-disable */
-			const processed: any = [];
-			/* eslint-enable */
+			const processed: Array<{x: number; y: number | null}> = [];
 			const start = fiber_segments[i].start; //start point of segment in meters
 			const end = fiber_segments[i].end; //end point of segment in meters
 			const si = start / interval; //start point of segment on data array corresponding to interval
@@ -87,18 +86,16 @@ export default async function get_segment_temps(
 			// (index * interval) + start
 
 			segmentedData[i].forEach((value: number, index: number) => {
-				if (value > -50 && value < 500)
-					//remove obvious peeks from data
+				if (value > -50 && value < 500) {
+					// remove obvious peaks from data
 					processed.push(
-						//if imperial is true then convert to feet and fahrenheit
 						imperial
-							? {
-									x: (start + index * interval) * 3.28084, //convert to feet
-									y: value * 1.8 + 32, //convert to fahrenheit
-							  }
+							? {x: (start + index * interval) * 3.28084, y: value * 1.8 + 32}
 							: {x: start + index * interval, y: value}
 					);
-				else processed.push({x: start + index * interval, y: null});
+				} else {
+					processed.push({x: start + index * interval, y: null});
+				}
 			});
 
 			responseData[fiber_segments[i].name] = processed;
