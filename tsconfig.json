@@ -1,0 +1,27 @@
+{
+	"compilerOptions": {
+		"outDir": "./dist", // output directory of where to put transpiled TS to JS code
+
+		"target": "es2016" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
+
+		"module": "commonjs" /* Specify what module code is generated. */,
+
+		"esModuleInterop": true,
+
+		"forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
+
+		"strict": true /* Enable all strict type-checking options. */,
+
+		"skipLibCheck": true /* Skip type checking all .d.ts files. */,
+		"resolveJsonModule": true,
+		"types": ["node", "jest"],
+		"baseUrl": ".",
+		"paths": {
+			"@/Types/*": ["./src/utils/types/*"],
+			"@/Services/*": ["./src/services/*"],
+			"@/Index": ["./index.ts"],
+			"@/Utils/*": ["./src/utils/*"]
+		},
+		"sourceMap": true
+	}
+}
