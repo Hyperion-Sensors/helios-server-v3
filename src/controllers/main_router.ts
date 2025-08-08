@@ -5,6 +5,7 @@ import express, {Router} from 'express';
 // (1) Add exports from ../routes/* to import sub routers
 
 import temps from '../routes/temps';
+import {requireAuth} from '../middlewares/auth';
 import caps from '../routes/caps';
 import devices from '../routes/devices';
 import assets from '../routes/assets';
@@ -22,6 +23,8 @@ const router: Router = express.Router();
 
 /*-------------------------------------------Main Logic----------------------------------------- */
 // (2) Add new routers below
+// Example: add middleware here to protect a group of routes
+// router.use(requireAuth);
 router.use('/temps', temps);
 router.use('/caps', caps);
 router.use('/devices', devices);

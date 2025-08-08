@@ -33,8 +33,17 @@ describe('settings-helpers', () => {
 
 	describe('mutateSettings', () => {
 		const origin_settings = {
-			general: {Theme: 'dark', Units: 'metric'},
-			data_options: {refreshRate: 30, showHints: true},
+			general: {
+				Theme: 'dark',
+				Color_Blind_Mode: false,
+				Side_Panel_Default: true,
+			},
+			data_options: {
+				Pinned_Assets: [],
+				Favorite_Widgets: [],
+				Data_Refresh_Rate: 30,
+				Unit_System: 'metric',
+			},
 		};
 
 		it('mutates general settings when settings_type is general', () => {
@@ -47,20 +56,21 @@ describe('settings-helpers', () => {
 			) as any;
 
 			expect(updated.general.Theme).toBe('light');
-			expect(updated.general.Units).toBe('metric');
+			expect(updated.general.Color_Blind_Mode).toBe(false);
+			expect(updated.general.Side_Panel_Default).toBe(true);
 			expect(updated.data_options).toEqual(origin_settings.data_options);
 		});
 
 		it('mutates data options when settings_type is data-options', () => {
 			const updated = mutateSettings(
 				'data-options',
-				{refreshRate: 15},
+				{Data_Refresh_Rate: 15},
 				origin_settings,
 				origin_settings.general,
 				origin_settings.data_options
 			) as any;
 
-			expect(updated.data_options.refreshRate).toBe(15);
+			expect(updated.data_options.Data_Refresh_Rate).toBe(15);
 			expect(updated.general).toEqual(origin_settings.general);
 		});
 
